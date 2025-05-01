@@ -1,0 +1,28 @@
+---
+- name: Copy Dockerfile
+  copy:
+    src: app/Dockerfile
+    dest: /opt/prometheus-exporter/Dockerfile
+
+- name: Build Docker image
+  command:
+    cmd: docker build -t prometheus-exporter:latest /opt/prometheus-exporter
+  changed_when: true
+
+- name: Stop existing container
+  command: docker stop prometheus-exporter
+  ignore_errors: yes
+  changed_when: false
+
+- name: Remove existing container
+  command: docker rm prometheus-exporter
+  ignore_errors: yes
+  changed_when: false
+
+- name: Run Docker container with configured ports
+  command: >
+    docker run -d --name prometheus-exporter 
+    --restart always
+    -p {{ container_port }}:8080
+    prometheus-exporter:latest
+  changed_when: true

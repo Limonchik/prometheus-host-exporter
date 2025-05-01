@@ -1,0 +1,20 @@
+---
+- name: Install Python requirements for VM deployment
+  pip:
+    requirements: /opt/prometheus-exporter/requirements.txt
+    executable: pip3
+
+- name: Create systemd service file with configured port
+  template:
+    src: prometheus_exporter.service.j2
+    dest: /etc/systemd/system/prometheus_exporter.service
+    mode: '0644'
+  vars:
+    app_port: "{{ vm_port }}"
+
+- name: Enable and start Prometheus exporter service
+  systemd:
+    name: prometheus_exporter
+    enabled: yes
+    state: started
+    daemon_reload: yes

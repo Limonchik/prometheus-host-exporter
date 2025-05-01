@@ -2,6 +2,12 @@ from flask import Flask, Response
 from prometheus_client import generate_latest, CONTENT_TYPE_LATEST, Gauge
 import os
 import socket
+import argparse
+
+# Добавление поддержки аргументов командной строки
+parser = argparse.ArgumentParser(description='Prometheus Host Type Exporter')
+parser.add_argument('--port', type=int, default=8080, help='Port to run the server on')
+args = parser.parse_args()
 
 app = Flask(__name__)
 
@@ -41,5 +47,6 @@ def metrics():
 if __name__ == '__main__':
     # Инициализируем метрики
     determine_host_type()
-    # Запускаем сервер
-    app.run(host='0.0.0.0', port=8080)
+    # Запускаем сервер на указанном порту
+    port = int(os.environ.get('PORT', args.port))
+    app.run(host='0.0.0.0', port=port)

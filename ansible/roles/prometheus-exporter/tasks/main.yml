@@ -21,20 +21,9 @@
     - "app/app.py"
     - "app/requirements.txt"
 
-- name: Install Python requirements
-  pip:
-    requirements: /opt/prometheus-exporter/requirements.txt
-    executable: pip3
+# Включаем задачи в зависимости от выбранного типа развертывания
+- include_tasks: vm_deploy.yml
+  when: deployment_type == 'vm'
 
-- name: Create systemd service file
-  template:
-    src: prometheus_exporter.service.j2
-    dest: /etc/systemd/system/prometheus_exporter.service
-    mode: '0644'
-
-- name: Enable and start Prometheus exporter service
-  systemd:
-    name: prometheus_exporter
-    enabled: yes
-    state: started
-    daemon_reload: yes
+- include_tasks: container_deploy.yml
+  when: deployment_type == 'container'

@@ -2,5 +2,9 @@
 - name: Deploy Prometheus Host Type Exporter
   hosts: rocky_servers
   become: yes
+  vars:
+    deployment_type: "{{ deployment_type | default('vm') }}"
+    vm_port: "{{ vm_port | default('8080') }}"
+    container_port: "{{ container_port | default('8081') }}"
   roles:
     - prometheus-exporter

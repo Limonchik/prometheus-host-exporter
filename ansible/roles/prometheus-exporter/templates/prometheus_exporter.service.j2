@@ -3,11 +3,11 @@ Description=Prometheus Host Type Exporter
 After=network.target
 
 [Service]
-Type=simple
-User=root
+Environment="PORT={{ app_port }}"
+ExecStart=/usr/bin/python3 /opt/prometheus-exporter/app.py --port={{ app_port }}
 WorkingDirectory=/opt/prometheus-exporter
-ExecStart=/usr/bin/python3 /opt/prometheus-exporter/app.py
 Restart=always
+User=root
 
 [Install]
 WantedBy=multi-user.target
