@@ -18,8 +18,8 @@
     src: "{{ item }}"
     dest: /opt/prometheus-exporter/
   with_items:
-    - "../../app/app.py"
-    - "../../app/requirements.txt"
+    - "app/app.py"
+    - "app/requirements.txt"
 
 - name: Install Python requirements
   pip:
