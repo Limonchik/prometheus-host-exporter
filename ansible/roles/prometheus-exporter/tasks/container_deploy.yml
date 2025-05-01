@@ -42,15 +42,20 @@
     cmd: docker build -t prometheus-exporter:latest /opt/prometheus-exporter
   changed_when: true
 
+- name: Check if container exists
+  command: docker ps -a --filter name=prometheus-exporter --format '{{.Names}}'
+  register: container_exists
+  changed_when: false
+
 - name: Stop existing container
   command: docker stop prometheus-exporter
-  ignore_errors: yes
-  changed_when: false
+  when: container_exists.stdout == 'prometheus-exporter'
+  changed_when: true
 
 - name: Remove existing container
   command: docker rm prometheus-exporter
-  ignore_errors: yes
-  changed_when: false
+  when: container_exists.stdout == 'prometheus-exporter'
+  changed_when: true
 
 - name: Run Docker container
   command: >
