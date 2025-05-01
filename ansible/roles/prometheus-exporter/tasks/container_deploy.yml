@@ -1,4 +1,37 @@
 ---
+- name: Check if Docker is installed
+  stat:
+    path: /usr/bin/docker
+  register: docker_binary
+
+- name: Install Docker dependencies
+  dnf:
+    name:
+      - yum-utils
+      - device-mapper-persistent-data
+      - lvm2
+    state: present
+  when: not docker_binary.stat.exists
+
+- name: Add Docker repo
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+  when: not docker_binary.stat.exists
+
+- name: Install Docker
+  dnf:
+    name: docker-ce
+    state: present
+  when: not docker_binary.stat.exists
+
+- name: Start Docker service
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+  when: not docker_binary.stat.exists or docker_binary.stat.exists
+
 - name: Copy Dockerfile
   copy:
     src: app/Dockerfile
@@ -19,7 +52,7 @@
   ignore_errors: yes
   changed_when: false
 
-- name: Run Docker container with configured ports
+- name: Run Docker container
   command: >
     docker run -d --name prometheus-exporter 
     --restart always
