@@ -1,0 +1,6 @@
+---
+- name: Deploy Prometheus Host Type Exporter
+  hosts: rocky_servers
+  become: yes
+  roles:
+    - prometheus-exporter

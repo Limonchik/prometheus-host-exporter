@@ -1,0 +1,13 @@
+[Unit]
+Description=Prometheus Host Type Exporter
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/prometheus-exporter
+ExecStart=/usr/bin/python3 /opt/prometheus-exporter/app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
